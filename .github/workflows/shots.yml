@@ -38,39 +38,38 @@ jobs:
     - name: Update shots.yml with dynamic filename
       run: |
        if [ -f shots.yml ]; then
-  # Extract URL from shots.yml
-  URL=$(grep -Eo 'url: *[^ ]+' shots.yml | sed 's/url: //g' | tr -d '[:space:]')
-
-  # Validate if URL is properly extracted
-  if [[ -z "$URL" ]]; then
-    echo "Error: Could not extract a valid URL from shots.yml"
-    exit 1
-  fi
-
-  # Extract domain name from URL
-  DOMAIN=$(echo "$URL" | awk -F/ '{print $3}')
-
-  # Validate if DOMAIN is extracted correctly
-  if [[ -z "$DOMAIN" ]]; then
-    echo "Error: Could not extract a valid domain from URL ($URL)"
-    exit 1
-  fi
-
-  # Generate timestamp in YYYY-MM-DD_HH-MM-SS format
-  TIMESTAMP=$(date -u +"%Y-%m-%d_%H-%M-%S")
-
-  # Construct the filename
-  FILENAME="${DOMAIN}_${TIMESTAMP}.png"
-
-  # Update shots.yml with the new filename
-  sed -i "s|output: .*|output: ${FILENAME}|" shots.yml
-  echo "Updated shots.yml -> output: ${FILENAME}"
-
-else
-  echo "Error: shots.yml not found!"
-  exit 1
-fi
-
+          # Extract URL from shots.yml
+          URL=$(grep -Eo 'url: *[^ ]+' shots.yml | sed 's/url: //g' | tr -d '[:space:]')
+        
+          # Validate if URL is properly extracted
+          if [[ -z "$URL" ]]; then
+            echo "Error: Could not extract a valid URL from shots.yml"
+            exit 1
+          fi
+        
+          # Extract domain name from URL
+          DOMAIN=$(echo "$URL" | awk -F/ '{print $3}')
+        
+          # Validate if DOMAIN is extracted correctly
+          if [[ -z "$DOMAIN" ]]; then
+            echo "Error: Could not extract a valid domain from URL ($URL)"
+            exit 1
+          fi
+        
+          # Generate timestamp in YYYY-MM-DD_HH-MM-SS format
+          TIMESTAMP=$(date -u +"%Y-%m-%d_%H-%M-%S")
+        
+          # Construct the filename
+          FILENAME="${DOMAIN}_${TIMESTAMP}.png"
+        
+          # Update shots.yml with the new filename
+          sed -i "s|output: .*|output: ${FILENAME}|" shots.yml
+          echo "Updated shots.yml -> output: ${FILENAME}"
+        
+        else
+          echo "Error: shots.yml not found!"
+          exit 1
+        fi
     - name: Take shots
       run: |
         shot-scraper multi shots.yml
