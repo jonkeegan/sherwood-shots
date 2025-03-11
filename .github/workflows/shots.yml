@@ -38,11 +38,21 @@ jobs:
     - name: Update shots.yml with dynamic filename
       run: |
         if [ -f shots.yml ]; then
-          URL=$(grep 'url:' shots.yml | awk '{print $2}')
+          URL=$(grep 'url:' shots.yml | awk '{print $2}' | tr -d '[:space:]')
           DOMAIN=$(echo $URL | awk -F/ '{print $3}')
           TIMESTAMP=$(date -u +"%Y-%m-%d_%H-%M-%S")
           FILENAME="${DOMAIN}_${TIMESTAMP}.png"
-          sed -i "s|output: .*|output: ${FILENAME}|" shots.yml
+          
+          # Ensure DOMAIN is not empty
+          if [[ -n "$DOMAIN" ]]; then
+            sed -i "s|output: .*|output: ${FILENAME}|" shots.yml
+          else
+            echo "Error: Could not extract domain from URL in shots.yml"
+            exit 1
+          fi
+        else
+          echo "Error: shots.yml not found!"
+          exit 1
         fi
     - name: Take shots
       run: |
