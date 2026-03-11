@@ -1,6 +1,8 @@
 name: Take screenshots
 
 on:
+  schedule:
+    - cron: "0 10,22 * * 1-5"  
   push:
   workflow_dispatch:
 
